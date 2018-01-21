@@ -1,0 +1,83 @@
+
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<title>Instagram download</title>
+</head>
+<body>
+<h2>Instagram downloader</h2>
+<input id="url" type="text" placeholder="url here">
+<button type="button" onclick="download()">Download</button>
+<div id="examples">
+Example link:
+<br />
+https://www.instagram.com/p/BbJoM-7lXjS/
+<br />
+https://www.instagram.com/p/BUa-aOUAHzh/
+</div>
+<div id="info">
+</div>
+<div id="output">
+</div>
+<script>
+if($==undefined){
+//jquery break
+alert("Sorry,error");
+}
+alert("start");
+outputdiv=document.getElementById("output");
+infodiv=document.getElementById("info");
+function suc(data){
+text=["do not use this element!!","id: ","Ширина: ","Высота: ","Комментарии: ","Просмотры:  "];
+alert("suc");
+console.log("JSON:");
+try{
+data=JSON.parse(data);
+}
+catch(e){
+alert("Coudn't load data. Check url");
+}
+info=[]; //инфо о объекте [тип!,id,ширина,высота,просмотры]
+info[0]=data.graphql.shortcode_media.__typename;
+/*GraphImage*/
+info[1]=data.graphql.shortcode_media.id;
+info[2]=data.graphql.shortcode_media.dimensions.width;
+info[3]=data.graphql.shortcode_media.dimensions.height;
+info[4]=data.graphql.shortcode_media.comments_disabled;
+info[4]=(info[4]==true)?"отключены":"включены";
+//info[4]=data.graphql.shortcode_media.edge.edge_media_preview_like.count;
+//alert(data.graphql.shortcode_media.edge);//edge_media_preview_like
+src=[];
+if(info[0]=="GraphImage") src[0]=data.graphql.shortcode_media.display_url;
+else{
+    src[0]=data.graphql.shortcode_media.video_url;
+    info[5]=data.graphql.shortcode_media.video_view_count;
+}
+infodiv.innerHTML="<br/>Info: <br />";
+for(i=1;i<info.length;i++){
+infodiv.innerHTML+=text[i] +  info[i] + "<br />";
+}
+outputdiv.innerHTML="<h2>Links to download</h2>" + makelink(src[0],"First link");
+ }
+function err(){
+    console.log("error");
+    alert("Error");
+ }
+function makelink(src,txt){
+return "<a href=' " + src + " '>" +txt + "</a>";
+}
+function download(){
+//https://www.instagram.com/p/BbJoM-7lXjS/
+var js=2;
+url=document.getElementById("url").value;
+content=$.ajax({
+  url: "http://nagaevmt49.000webhostapp.com/insta/srv.php",
+  data: {link:url},
+  success: suc,
+  error: err
+});
+}
+</script>
+<div style='text-align: right;position: fixed;z-index:9999999;bottom: 0; width: 100%;cursor: pointer;line-height: 0;'><a title="Hosted on free web hosting 000webhost.com. Host your own website for FREE." target="_blank" href="https://www.000webhost.com/?utm_source=000webhostapp&amp;utm_campaign=000_logo&amp;utm_medium=website_{$app['name']}&amp;utm_content=footer_img"><img src="https://cdn.rawgit.com/000webhost/logo/e9bd13f7/footer-powered-by-000webhost-white2.png"  alt="www.000webhost.com"></a></div></body>
+</html>
